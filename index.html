@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALUVIDRIO · Presupuestos</title>
+<meta name="theme-color" content="#16324F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Aluvidrio">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16324F;
+    --navy-deep:#0E2436;
+    --steel:#5B6B76;
+    --steel-light:#AFC0C8;
+    --aluminum:#E7E9EA;
+    --paper:#F4F5F3;
+    --cyan:#3FA7B3;
+    --orange:#E2672B;
+    --ink:#1B2226;
+    --line:rgba(22,50,79,0.28);
+    --danger:#C0392B;
+    --ok:#2E8B57;
+    font-family: 'Inter', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/28px 28px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/28px 28px,
+      var(--paper);
+    background-color: var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+  }
+  .bg-grid{ background-color: transparent; }
+
+  h1,h2,h3,.disp{ font-family:'Space Grotesk', sans-serif; letter-spacing:0.01em; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ---------- Header ---------- */
+  header.app-head{
+    background: var(--navy);
+    color:#fff;
+    padding:18px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:4px solid var(--orange);
+    flex-wrap:wrap; gap:10px;
+  }
+  header.app-head .brand{ display:flex; align-items:center; gap:12px;}
+  header.app-head svg{ flex-shrink:0; }
+  header.app-head .title{ font-size:20px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em;}
+  header.app-head .subtitle{ font-size:12px; color:var(--steel-light); font-family:'JetBrains Mono',monospace;}
+  header.app-head .folio-box{
+    font-family:'JetBrains Mono', monospace; font-size:12px; text-align:right; color:var(--steel-light);
+  }
+  header.app-head .folio-box b{ color:#fff; font-size:14px; }
+
+  /* ---------- Tabs ---------- */
+  nav.tabs{
+    display:flex; gap:2px; background:var(--navy-deep); padding:0 24px;
+    overflow-x:auto;
+  }
+  nav.tabs button{
+    appearance:none; border:none; cursor:pointer;
+    background:transparent; color:var(--steel-light);
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px;
+    text-transform:uppercase; letter-spacing:0.05em;
+    padding:12px 18px; border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  nav.tabs button.active{ color:#fff; border-bottom-color:var(--orange); }
+  nav.tabs button:hover{ color:#fff; }
+
+  main{ max-width:1100px; margin:0 auto; padding:24px; }
+  .panel{
+    background:#fff; border:1px solid var(--line); border-radius:2px;
+    padding:20px; margin-bottom:20px;
+    box-shadow: 0 1px 0 rgba(22,50,79,0.06);
+  }
+  .panel h2{
+    margin:0 0 16px 0; font-size:14px; text-transform:uppercase; letter-spacing:0.08em;
+    color:var(--navy); display:flex; align-items:center; gap:8px;
+  }
+  .panel h2::before{ content:''; width:8px; height:8px; background:var(--orange); display:inline-block; }
+
+  .grid{ display:grid; gap:12px; }
+  .grid-2{ grid-template-columns:1fr 1fr; }
+  .grid-3{ grid-template-columns:1fr 1fr 1fr; }
+  .grid-4{ grid-template-columns:1fr 1fr 1fr 1fr; }
+  @media(max-width:700px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr 1fr; } }
+
+  label{ font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--steel); display:block; margin-bottom:4px; font-weight:600; }
+  input[type=text], input[type=number], input[type=date], input[type=tel], select, textarea{
+    width:100%; padding:9px 10px; border:1px solid #C9D2D6; border-radius:2px;
+    font-family:'Inter', sans-serif; font-size:14px; background:#fff; color:var(--ink);
+  }
+  input:focus, select:focus, textarea:focus{ outline:2px solid var(--cyan); outline-offset:1px; border-color:var(--cyan); }
+  .field{ margin-bottom:4px; }
+  textarea{ resize:vertical; min-height:70px; }
+
+  .btn{
+    appearance:none; border:none; cursor:pointer; border-radius:2px;
+    font-family:'Space Grotesk', sans-serif; font-weight:600; font-size:13px;
+    text-transform:uppercase; letter-spacing:0.04em; padding:10px 18px;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .btn-primary{ background:var(--navy); color:#fff; }
+  .btn-primary:hover{ background:var(--navy-deep); }
+  .btn-accent{ background:var(--orange); color:#fff; }
+  .btn-accent:hover{ background:#c65a22; }
+  .btn-ghost{ background:transparent; color:var(--navy); border:1px solid var(--navy); }
+  .btn-ghost:hover{ background:var(--navy); color:#fff; }
+  .btn-danger{ background:transparent; color:var(--danger); border:1px solid var(--danger); }
+  .btn-danger:hover{ background:var(--danger); color:#fff; }
+  .btn-sm{ padding:6px 10px; font-size:11px; }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  .toggle-group{ display:flex; border:1px solid var(--navy); border-radius:2px; overflow:hidden; width:fit-content; }
+  .toggle-group button{
+    appearance:none; border:none; cursor:pointer; background:#fff; color:var(--navy);
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:12px; text-transform:uppercase;
+    padding:9px 16px; letter-spacing:0.04em;
+  }
+  .toggle-group button.active{ background:var(--navy); color:#fff; }
+
+  /* ---------- Item cards (cutting list) ---------- */
+  .item-card{
+    position:relative; border:1px dashed var(--steel); border-radius:2px;
+    padding:14px 16px; margin-bottom:10px; background:var(--paper);
+  }
+  .item-card::before, .item-card::after,
+  .item-card .rm-br, .item-card .rm-bl{
+    content:''; position:absolute; width:10px; height:10px;
+    border-color:var(--orange); border-style:solid;
+  }
+  .item-card::before{ top:-1px; left:-1px; border-width:2px 0 0 2px; }
+  .item-card::after{ top:-1px; right:-1px; border-width:2px 2px 0 0; }
+  .item-card .rm-bl{ bottom:-1px; left:-1px; border-width:0 0 2px 2px; }
+  .item-card .rm-br{ bottom:-1px; right:-1px; border-width:0 2px 2px 0; }
+  .item-card .row1{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .item-card .cat-tag{
+    font-family:'JetBrains Mono',monospace; font-size:10px; text-transform:uppercase;
+    color:#fff; background:var(--navy); padding:2px 7px; letter-spacing:0.05em; display:inline-block; margin-bottom:6px;
+  }
+  .item-card .desc{ font-weight:600; font-size:14px; }
+  .item-card .meta{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--steel); margin-top:4px; }
+  .item-card .price-col{ text-align:right; }
+  .item-card .subtotal{ font-family:'JetBrains Mono',monospace; font-weight:700; font-size:16px; color:var(--navy); }
+  .item-card .unit{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--steel); }
+  .item-card .del{
+    background:none; border:none; cursor:pointer; color:var(--danger); font-size:16px; line-height:1; padding:2px 4px;
+  }
+  .empty-note{ color:var(--steel); font-size:13px; font-style:italic; padding:14px 0; }
+
+  /* ---------- Totals stamp ---------- */
+  .totals-wrap{ display:flex; justify-content:flex-end; align-items:flex-end; gap:20px; flex-wrap:wrap; margin-top:14px; }
+  .totals-lines{ font-family:'JetBrains Mono',monospace; font-size:13px; min-width:220px; }
+  .totals-lines div{ display:flex; justify-content:space-between; padding:3px 0; }
+  .totals-lines .lbl{ color:var(--steel); }
+  .stamp{
+    border:3px double var(--orange); color:var(--orange); border-radius:4px;
+    padding:10px 18px; transform:rotate(-2deg); text-align:center;
+  }
+  .stamp .lbl{ font-family:'Space Grotesk',sans-serif; font-size:11px; letter-spacing:0.12em; font-weight:700; }
+  .stamp .amt{ font-family:'JetBrains Mono',monospace; font-size:24px; font-weight:700; }
+
+  /* ---------- Catalog tables ---------- */
+  table.cat-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.cat-table th{
+    text-align:left; font-family:'Space Grotesk',sans-serif; font-size:11px; text-transform:uppercase;
+    letter-spacing:0.04em; color:var(--steel); border-bottom:2px solid var(--navy); padding:6px 8px;
+  }
+  table.cat-table td{ padding:6px 8px; border-bottom:1px solid #E3E7E8; }
+  table.cat-table input{ padding:6px 8px; font-size:13px; }
+  .row-actions{ text-align:right; white-space:nowrap; }
+
+  /* ---------- Saved quotes list ---------- */
+  .saved-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    border:1px solid var(--line); border-radius:2px; padding:12px 14px; margin-bottom:8px; background:#fff;
+    flex-wrap:wrap;
+  }
+  .saved-row .info b{ display:block; font-size:14px; }
+  .saved-row .info span{ font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--steel); }
+  .saved-row .actions{ display:flex; gap:6px; }
+
+  .hint{ font-size:12px; color:var(--steel); margin-top:2px; }
+  .section-divider{ border:none; border-top:1px dashed var(--line); margin:18px 0; }
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+    background:var(--navy); color:#fff; padding:10px 20px; border-radius:2px;
+    font-family:'Space Grotesk',sans-serif; font-size:13px; z-index:999; box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    border-left:4px solid var(--orange);
+  }
+
+  /* ---------- Print ---------- */
+  #print-view{ display:none; }
+  @media print{
+    header.app-head, nav.tabs, .no-print{ display:none !important; }
+    body{ background:#fff; }
+    main{ padding:0; max-width:100%; }
+    .panel{ display:none !important; }
+    #print-view{ display:block !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-head">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+      <rect x="2" y="2" width="30" height="30" stroke="#fff" stroke-width="2"/>
+      <line x1="2" y1="12" x2="32" y2="12" stroke="#fff" stroke-width="1.5"/>
+      <line x1="2" y1="22" x2="32" y2="22" stroke="#3FA7B3" stroke-width="1.5"/>
+      <line x1="12" y1="2" x2="12" y2="32" stroke="#3FA7B3" stroke-width="1.5"/>
+      <line x1="22" y1="2" x2="22" y2="32" stroke="#fff" stroke-width="1.5"/>
+    </svg>
+    <div>
+      <div class="title" id="empresaNombreHead">ALUVIDRIO</div>
+      <div class="subtitle">Cotizador de aluminio y vidrio</div>
+    </div>
+  </div>
+  <div class="folio-box">
+    FOLIO <b id="folioHead">—</b><br>
+    <span id="fechaHead">—</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="nuevo">Nuevo presupuesto</button>
+  <button class="tab-btn" data-tab="catalogo">Catálogo de precios</button>
+  <button class="tab-btn" data-tab="guardados">Presupuestos guardados</button>
+</nav>
+
+<main>
+
+  <!-- ===================== TAB: NUEVO ===================== -->
+  <section id="tab-nuevo">
+
+    <div class="panel">
+      <h2>Datos del presupuesto</h2>
+      <div class="grid grid-4">
+        <div class="field"><label>Folio</label><input type="text" id="inFolio"></div>
+        <div class="field"><label>Fecha</label><input type="date" id="inFecha"></div>
+        <div class="field"><label>Cliente</label><input type="text" id="inCliente" placeholder="Nombre del cliente"></div>
+        <div class="field"><label>Teléfono</label><input type="tel" id="inTelefono" placeholder="Opcional"></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:10px;">
+        <div class="field"><label>Obra / dirección</label><input type="text" id="inObra" placeholder="Ej. Fracc. Las Flores, casa 12"></div>
+        <div class="field"><label>Vigencia de la cotización</label><input type="text" id="inVigencia" placeholder="Ej. 15 días" value="15 días"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Agregar partida</h2>
+      <div class="grid grid-4">
+        <div class="field">
+          <label>Categoría</label>
+          <select id="itCategoria">
+            <option>Ventana</option>
+            <option>Puerta</option>
+            <option>Cancel</option>
+            <option>Domo</option>
+            <option>Mampara</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column:span 2;">
+          <label>Descripción</label>
+          <input type="text" id="itDescripcion" placeholder="Ej. Ventana corrediza 2 hojas">
+        </div>
+        <div class="field">
+          <label>Cantidad</label>
+          <input type="number" id="itCantidad" value="1" min="1">
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:6px;">
+        <label>Modo de cálculo</label>
+        <div class="toggle-group" id="modoToggle">
+          <button type="button" class="active" data-modo="m2">Por m²</button>
+          <button type="button" data-modo="fijo">Precio fijo</button>
+        </div>
+      </div>
+
+      <!-- MODO M2 -->
+      <div id="modoM2Fields" style="margin-top:14px;">
+        <div class="grid grid-4">
+          <div class="field"><label>Ancho (m)</label><input type="number" step="0.01" id="itAncho" placeholder="1.20"></div>
+          <div class="field"><label>Alto (m)</label><input type="number" step="0.01" id="itAlto" placeholder="1.50"></div>
+          <div class="field"><label>Área facturable</label><input type="text" id="itAreaCalc" class="mono" readonly value="0.00 m²"></div>
+          <div class="field"><label>Herrajes / extras ($)</label><input type="number" step="0.01" id="itHerrajes" placeholder="0"></div>
+        </div>
+        <div class="grid grid-2" style="margin-top:10px;">
+          <div class="field">
+            <label>Línea de aluminio</label>
+            <select id="itPerfil"></select>
+          </div>
+          <div class="field">
+            <label>Tipo de vidrio</label>
+            <select id="itVidrio"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODO FIJO -->
+      <div id="modoFijoFields" style="display:none; margin-top:14px;">
+        <div class="grid grid-2">
+          <div class="field">
+            <label>Modelo guardado</label>
+            <select id="itModelo"><option value="">— Personalizado —</option></select>
+          </div>
+          <div class="field"><label>Precio unitario ($)</label><input type="number" step="0.01" id="itPrecioFijo" placeholder="0.00"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-accent" id="btnAddItem">+ Agregar partida</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Lista de partidas</h2>
+      <div id="itemsList"><div class="empty-note">Aún no hay partidas agregadas.</div></div>
+
+      <hr class="section-divider">
+
+      <div class="grid grid-3">
+        <div class="field"><label>Descuento (%)</label><input type="number" step="0.01" id="inDescuento" value="0"></div>
+        <div class="field">
+          <label>IVA</label>
+          <div class="toggle-group" id="ivaToggle">
+            <button type="button" class="active" data-iva="16">16%</button>
+            <button type="button" data-iva="0">Sin IVA</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="totals-wrap">
+        <div class="totals-lines">
+          <div><span class="lbl">Subtotal</span><span id="sumSubtotal" class="mono">$0.00</span></div>
+          <div><span class="lbl">Descuento</span><span id="sumDescuento" class="mono">-$0.00</span></div>
+          <div><span class="lbl">IVA</span><span id="sumIva" class="mono">$0.00</span></div>
+        </div>
+        <div class="stamp">
+          <div class="lbl">TOTAL</div>
+          <div class="amt mono" id="sumTotal">$0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Notas y condiciones</h2>
+      <textarea id="inNotas">Tiempo de entrega: a convenir.
+Forma de pago: 50% anticipo, 50% contra entrega.
+Garantía: 1 año en instalación y herrajes.</textarea>
+    </div>
+
+    <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px;">
+      <button class="btn btn-primary" id="btnGuardar">Guardar presupuesto</button>
+      <button class="btn btn-ghost" id="btnImprimir">Imprimir / Guardar PDF</button>
+      <button class="btn btn-danger" id="btnNuevo">Nuevo (limpiar)</button>
+    </div>
+  </section>
+
+  <!-- ===================== TAB: CATALOGO ===================== -->
+  <section id="tab-catalogo" style="display:none;">
+
+    <div class="panel">
+      <h2>Datos de tu negocio</h2>
+      <div class="grid grid-2">
+        <div class="field"><label>Nombre del negocio</label><input type="text" id="empNombre" placeholder="Ej. Aluminios García"></div>
+        <div class="field"><label>Teléfono</label><input type="tel" id="empTelefono"></div>
+      </div>
+      <div class="field" style="margin-top:10px;"><label>Dirección</label><input type="text" id="empDireccion"></div>
+      <div class="field" style="margin-top:10px;">
+        <label><input type="checkbox" id="empAreaMinima" style="width:auto; margin-right:6px;">Aplicar área mínima de facturación por pieza</label>
+        <input type="number" step="0.1" id="empAreaMinimaValor" value="1" style="max-width:120px; margin-top:6px;">
+        <div class="hint">Práctica común: cobrar mínimo 1 m² aunque la pieza sea más chica.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Líneas de aluminio (precio por m²)</h2>
+      <table class="cat-table" id="tablaPerfiles">
+        <thead><tr><th>Línea / serie</th><th style="width:140px;">Precio / m²</th><th style="width:60px;"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-ghost btn-sm" id="btnAddPerfil" style="margin-top:10px;">+ Agregar línea</button>
+    </div>
+
+    <div class="panel">
+      <h2>Tipos de vidrio (precio por m²)</h2>
+      <table class="cat-table" id="tablaVidrios">
+        <thead><tr><th>Tipo de vidrio</th><th style="width:140px;">Precio / m²</th><th style="width:60px;"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-ghost btn-sm" id="btnAddVidrio" style="margin-top:10px;">+ Agregar vidrio</button>
+    </div>
+
+    <div class="panel">
+      <h2>Modelos de precio fijo</h2>
+      <div class="hint" style="margin-bottom:10px;">Para piezas que cotizas con precio cerrado, sin calcular por m² (ej. un cancel de baño estándar).</div>
+      <table class="cat-table" id="tablaModelos">
+        <thead><tr><th>Nombre del modelo</th><th style="width:140px;">Categoría</th><th style="width:140px;">Precio</th><th style="width:60px;"></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button class="btn btn-ghost btn-sm" id="btnAddModelo" style="margin-top:10px;">+ Agregar modelo</button>
+    </div>
+
+    <div class="no-print" style="margin-bottom:40px;">
+      <button class="btn btn-primary" id="btnGuardarCatalogo">Guardar catálogo</button>
+    </div>
+  </section>
+
+  <!-- ===================== TAB: GUARDADOS ===================== -->
+  <section id="tab-guardados" style="display:none;">
+    <div class="panel">
+      <h2>Presupuestos guardados</h2>
+      <div id="savedList"><div class="empty-note">Todavía no has guardado ningún presupuesto.</div></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== PRINT VIEW ===================== -->
+<div id="print-view">
+  <div style="padding:30px; font-family:'Inter',sans-serif; color:#111;">
+    <div style="display:flex; justify-content:space-between; border-bottom:3px solid #16324F; padding-bottom:14px; margin-bottom:20px;">
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700;" id="pvEmpresa">ALUVIDRIO</div>
+        <div style="font-size:12px; color:#555;" id="pvEmpresaDatos"></div>
+      </div>
+      <div style="text-align:right; font-family:'JetBrains Mono',monospace; font-size:12px;">
+        <div>FOLIO: <b id="pvFolio"></b></div>
+        <div>FECHA: <span id="pvFecha"></span></div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-bottom:18px; font-size:13px;">
+      <div><b>Cliente:</b> <span id="pvCliente"></span><br><b>Obra:</b> <span id="pvObra"></span></div>
+      <div><b>Vigencia:</b> <span id="pvVigencia"></span></div>
+    </div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:20px;">
+      <thead>
+        <tr style="border-bottom:2px solid #16324F; text-align:left;">
+          <th style="padding:6px;">Descripción</th>
+          <th style="padding:6px;">Detalle</th>
+          <th style="padding:6px; text-align:center;">Cant.</th>
+          <th style="padding:6px; text-align:right;">P. Unit.</th>
+          <th style="padding:6px; text-align:right;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="pvItemsBody"></tbody>
+    </table>
+    <div style="display:flex; justify-content:flex-end;">
+      <table style="font-family:'JetBrains Mono',monospace; font-size:13px; min-width:260px;">
+        <tr><td style="padding:3px 8px; color:#555;">Subtotal</td><td style="padding:3px 8px; text-align:right;" id="pvSubtotal"></td></tr>
+        <tr><td style="padding:3px 8px; color:#555;">Descuento</td><td style="padding:3px 8px; text-align:right;" id="pvDescuento"></td></tr>
+        <tr><td style="padding:3px 8px; color:#555;">IVA</td><td style="padding:3px 8px; text-align:right;" id="pvIva"></td></tr>
+        <tr style="border-top:2px solid #16324F; font-weight:700; font-size:16px;"><td style="padding:6px 8px;">TOTAL</td><td style="padding:6px 8px; text-align:right;" id="pvTotal"></td></tr>
+      </table>
+    </div>
+    <div style="margin-top:24px; font-size:12px; color:#333; white-space:pre-line;" id="pvNotas"></div>
+  </div>
+</div>
+
+<script>
+// ---------------------------------------------------------------
+// STATE
+// ---------------------------------------------------------------
+let catalog = { perfiles:[], vidrios:[], modelos:[], empresa:{ nombre:'', telefono:'', direccion:'', areaMinimaActiva:true, areaMinimaValor:1 } };
+let currentQuote = null; // {id, folio, fecha, cliente, telefono, obra, vigencia, items:[], descuentoPct, ivaPct, notas}
+let modoActual = 'm2';
+
+const money = n => '$' + (Number(n)||0).toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2});
+const uid = () => Math.random().toString(36).slice(2,9);
+
+function toast(msg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2400);
+}
+
+// ---------------------------------------------------------------
+// STORAGE HELPERS (localStorage — funciona offline, en el teléfono,
+// sin depender de ningún servicio externo)
+// ---------------------------------------------------------------
+const STORAGE_PREFIX = 'aluvidrio:';
+
+async function storageGet(key){
+  try{
+    const raw = localStorage.getItem(STORAGE_PREFIX + key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ console.error('storage get error', e); return null; }
+}
+async function storageSet(key, value){
+  try{
+    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+    return true;
+  }catch(e){
+    console.error('storage set error', e);
+    return false;
+  }
+}
+async function storageDelete(key){
+  try{ localStorage.removeItem(STORAGE_PREFIX + key); return true; }
+  catch(e){ console.error('storage delete error', e); return false; }
+}
+async function storageListPrefix(prefix){
+  try{
+    const full = STORAGE_PREFIX + (prefix || '');
+    const keys = [];
+    for(let i=0; i<localStorage.length; i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith(full)) keys.push(k.slice(STORAGE_PREFIX.length));
+    }
+    return keys;
+  }catch(e){ return []; }
+}
+
+// ---------------------------------------------------------------
+// DEFAULT CATALOG (seed on first use)
+// ---------------------------------------------------------------
+function defaultCatalog(){
+  return {
+    perfiles:[
+      {id:uid(), nombre:'Nacional 2"', precio:650},
+      {id:uid(), nombre:'Línea 3" reforzada', precio:950},
+      {id:uid(), nombre:'Serie 35 (europea)', precio:1450},
+    ],
+    vidrios:[
+      {id:uid(), nombre:'Claro 4mm', precio:380},
+      {id:uid(), nombre:'Claro 6mm', precio:520},
+      {id:uid(), nombre:'Bronce 6mm', precio:580},
+      {id:uid(), nombre:'Templado 6mm', precio:850},
+    ],
+    modelos:[
+      {id:uid(), nombre:'Cancel de baño corredizo estándar', categoria:'Cancel', precio:3500},
+    ],
+    empresa:{ nombre:'Aluminios y Vidrios', telefono:'', direccion:'', areaMinimaActiva:true, areaMinimaValor:1 }
+  };
+}
+
+function emptyQuote(){
+  const today = new Date();
+  return {
+    id: uid(),
+    folio: 'PRE-' + today.toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.floor(100+Math.random()*900),
+    fecha: today.toISOString().slice(0,10),
+    cliente:'', telefono:'', obra:'', vigencia:'15 días',
+    items: [],
+    descuentoPct: 0,
+    ivaPct: 16,
+    notas: document.getElementById('inNotas') ? document.getElementById('inNotas').value : ''
+  };
+}
+
+// ---------------------------------------------------------------
+// INIT
+// ---------------------------------------------------------------
+async function init(){
+  const savedCatalog = await storageGet('catalog');
+  catalog = savedCatalog || defaultCatalog();
+  if(!savedCatalog) await storageSet('catalog', catalog);
+
+  currentQuote = emptyQuote();
+
+  renderCatalogUI();
+  fillSelectsFromCatalog();
+  renderQuoteHeader();
+  renderItems();
+  renderSavedList();
+  bindEvents();
+}
+
+// ---------------------------------------------------------------
+// TABS
+// ---------------------------------------------------------------
+function bindEvents(){
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      ['nuevo','catalogo','guardados'].forEach(t=>{
+        document.getElementById('tab-'+t).style.display = (t===btn.dataset.tab) ? 'block' : 'none';
+      });
+      if(btn.dataset.tab==='guardados') renderSavedList();
+    });
+  });
+
+  document.querySelectorAll('#modoToggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#modoToggle button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      modoActual = btn.dataset.modo;
+      document.getElementById('modoM2Fields').style.display = modoActual==='m2' ? 'block':'none';
+      document.getElementById('modoFijoFields').style.display = modoActual==='fijo' ? 'block':'none';
+    });
+  });
+
+  document.querySelectorAll('#ivaToggle button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('#ivaToggle button').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentQuote.ivaPct = Number(btn.dataset.iva);
+      renderTotals();
+    });
+  });
+
+  ['itAncho','itAlto'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', updateAreaPreview);
+  });
+
+  document.getElementById('itModelo').addEventListener('change', (e)=>{
+    const m = catalog.modelos.find(x=>x.id===e.target.value);
+    if(m){
+      document.getElementById('itPrecioFijo').value = m.precio;
+      document.getElementById('itCategoria').value = m.categoria;
+    }
+  });
+
+  document.getElementById('btnAddItem').addEventListener('click', addItem);
+  document.getElementById('btnGuardar').addEventListener('click', guardarPresupuesto);
+  document.getElementById('btnImprimir').addEventListener('click', imprimir);
+  document.getElementById('btnNuevo').addEventListener('click', ()=>{
+    if(confirm('¿Limpiar el presupuesto actual y empezar uno nuevo?')){
+      currentQuote = emptyQuote();
+      document.getElementById('inNotas').value = 'Tiempo de entrega: a convenir.\nForma de pago: 50% anticipo, 50% contra entrega.\nGarantía: 1 año en instalación y herrajes.';
+      renderQuoteHeader();
+      renderItems();
+    }
+  });
+
+  document.getElementById('inDescuento').addEventListener('input', (e)=>{
+    currentQuote.descuentoPct = Number(e.target.value)||0;
+    renderTotals();
+  });
+
+  document.getElementById('btnAddPerfil').addEventListener('click', ()=>{ catalog.perfiles.push({id:uid(), nombre:'Nueva línea', precio:0}); renderCatalogUI(); });
+  document.getElementById('btnAddVidrio').addEventListener('click', ()=>{ catalog.vidrios.push({id:uid(), nombre:'Nuevo vidrio', precio:0}); renderCatalogUI(); });
+  document.getElementById('btnAddModelo').addEventListener('click', ()=>{ catalog.modelos.push({id:uid(), nombre:'Nuevo modelo', categoria:'Otro', precio:0}); renderCatalogUI(); });
+  document.getElementById('btnGuardarCatalogo').addEventListener('click', guardarCatalogo);
+
+  // sync header quote fields live
+  ['inFolio','inFecha','inCliente','inTelefono','inObra','inVigencia'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', syncHeaderToQuote);
+  });
+  document.getElementById('inNotas').addEventListener('input', (e)=>{ currentQuote.notas = e.target.value; });
+}
+
+function syncHeaderToQuote(){
+  currentQuote.folio = document.getElementById('inFolio').value;
+  currentQuote.fecha = document.getElementById('inFecha').value;
+  currentQuote.cliente = document.getElementById('inCliente').value;
+  currentQuote.telefono = document.getElementById('inTelefono').value;
+  currentQuote.obra = document.getElementById('inObra').value;
+  currentQuote.vigencia = document.getElementById('inVigencia').value;
+  document.getElementById('folioHead').textContent = currentQuote.folio || '—';
+  document.getElementById('fechaHead').textContent = currentQuote.fecha || '—';
+}
+
+function renderQuoteHeader(){
+  document.getElementById('inFolio').value = currentQuote.folio;
+  document.getElementById('inFecha').value = currentQuote.fecha;
+  document.getElementById('inCliente').value = currentQuote.cliente;
+  document.getElementById('inTelefono').value = currentQuote.telefono;
+  document.getElementById('inObra').value = currentQuote.obra;
+  document.getElementById('inVigencia').value = currentQuote.vigencia;
+  document.getElementById('inDescuento').value = currentQuote.descuentoPct;
+  document.getElementById('empresaNombreHead').textContent = (catalog.empresa.nombre || 'ALUVIDRIO').toUpperCase();
+  document.getElementById('folioHead').textContent = currentQuote.folio || '—';
+  document.getElementById('fechaHead').textContent = currentQuote.fecha || '—';
+  document.querySelectorAll('#ivaToggle button').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.iva)===currentQuote.ivaPct);
+  });
+}
+
+// ---------------------------------------------------------------
+// CATALOG UI
+// ---------------------------------------------------------------
+function renderCatalogUI(){
+  document.getElementById('empNombre').value = catalog.empresa.nombre || '';
+  document.getElementById('empTelefono').value = catalog.empresa.telefono || '';
+  document.getElementById('empDireccion').value = catalog.empresa.direccion || '';
+  document.getElementById('empAreaMinima').checked = !!catalog.empresa.areaMinimaActiva;
+  document.getElementById('empAreaMinimaValor').value = catalog.empresa.areaMinimaValor || 1;
+
+  const tbP = document.querySelector('#tablaPerfiles tbody'); tbP.innerHTML='';
+  catalog.perfiles.forEach(p=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input type="text" value="${escapeHtml(p.nombre)}" data-id="${p.id}" data-field="nombre" class="perfil-input"></td>
+      <td><input type="number" step="0.01" value="${p.precio}" data-id="${p.id}" data-field="precio" class="perfil-input"></td>
+      <td class="row-actions"><button class="btn btn-danger btn-sm del-perfil" data-id="${p.id}">✕</button></td>`;
+    tbP.appendChild(tr);
+  });
+
+  const tbV = document.querySelector('#tablaVidrios tbody'); tbV.innerHTML='';
+  catalog.vidrios.forEach(v=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input type="text" value="${escapeHtml(v.nombre)}" data-id="${v.id}" data-field="nombre" class="vidrio-input"></td>
+      <td><input type="number" step="0.01" value="${v.precio}" data-id="${v.id}" data-field="precio" class="vidrio-input"></td>
+      <td class="row-actions"><button class="btn btn-danger btn-sm del-vidrio" data-id="${v.id}">✕</button></td>`;
+    tbV.appendChild(tr);
+  });
+
+  const tbM = document.querySelector('#tablaModelos tbody'); tbM.innerHTML='';
+  catalog.modelos.forEach(m=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><input type="text" value="${escapeHtml(m.nombre)}" data-id="${m.id}" data-field="nombre" class="modelo-input"></td>
+      <td>
+        <select data-id="${m.id}" data-field="categoria" class="modelo-input">
+          ${['Ventana','Puerta','Cancel','Domo','Mampara','Otro'].map(c=>`<option value="${c}" ${c===m.categoria?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </td>
+      <td><input type="number" step="0.01" value="${m.precio}" data-id="${m.id}" data-field="precio" class="modelo-input"></td>
+      <td class="row-actions"><button class="btn btn-danger btn-sm del-modelo" data-id="${m.id}">✕</button></td>`;
+    tbM.appendChild(tr);
+  });
+
+  document.querySelectorAll('.perfil-input').forEach(inp=>inp.addEventListener('input', e=>{
+    const item = catalog.perfiles.find(x=>x.id===e.target.dataset.id);
+    item[e.target.dataset.field] = e.target.dataset.field==='precio' ? Number(e.target.value)||0 : e.target.value;
+  }));
+  document.querySelectorAll('.vidrio-input').forEach(inp=>inp.addEventListener('input', e=>{
+    const item = catalog.vidrios.find(x=>x.id===e.target.dataset.id);
+    item[e.target.dataset.field] = e.target.dataset.field==='precio' ? Number(e.target.value)||0 : e.target.value;
+  }));
+  document.querySelectorAll('.modelo-input').forEach(inp=>inp.addEventListener(inp.tagName==='SELECT'?'change':'input', e=>{
+    const item = catalog.modelos.find(x=>x.id===e.target.dataset.id);
+    item[e.target.dataset.field] = e.target.dataset.field==='precio' ? Number(e.target.value)||0 : e.target.value;
+  }));
+
+  document.querySelectorAll('.del-perfil').forEach(b=>b.addEventListener('click', e=>{
+    catalog.perfiles = catalog.perfiles.filter(x=>x.id!==e.target.dataset.id); renderCatalogUI();
+  }));
+  document.querySelectorAll('.del-vidrio').forEach(b=>b.addEventListener('click', e=>{
+    catalog.vidrios = catalog.vidrios.filter(x=>x.id!==e.target.dataset.id); renderCatalogUI();
+  }));
+  document.querySelectorAll('.del-modelo').forEach(b=>b.addEventListener('click', e=>{
+    catalog.modelos = catalog.modelos.filter(x=>x.id!==e.target.dataset.id); renderCatalogUI();
+  }));
+
+  document.getElementById('empNombre').oninput = e=>catalog.empresa.nombre = e.target.value;
+  document.getElementById('empTelefono').oninput = e=>catalog.empresa.telefono = e.target.value;
+  document.getElementById('empDireccion').oninput = e=>catalog.empresa.direccion = e.target.value;
+  document.getElementById('empAreaMinima').onchange = e=>catalog.empresa.areaMinimaActiva = e.target.checked;
+  document.getElementById('empAreaMinimaValor').oninput = e=>catalog.empresa.areaMinimaValor = Number(e.target.value)||1;
+}
+
+async function guardarCatalogo(){
+  const ok = await storageSet('catalog', catalog);
+  fillSelectsFromCatalog();
+  renderQuoteHeader();
+  toast(ok ? 'Catálogo guardado ✓' : '⚠ No se pudo guardar el catálogo.');
+}
+
+function fillSelectsFromCatalog(){
+  const selP = document.getElementById('itPerfil');
+  selP.innerHTML = catalog.perfiles.map(p=>`<option value="${p.id}">${escapeHtml(p.nombre)} — ${money(p.precio)}/m²</option>`).join('') || '<option value="">Sin líneas registradas</option>';
+  const selV = document.getElementById('itVidrio');
+  selV.innerHTML = catalog.vidrios.map(v=>`<option value="${v.id}">${escapeHtml(v.nombre)} — ${money(v.precio)}/m²</option>`).join('') || '<option value="">Sin vidrios registrados</option>';
+  const selM = document.getElementById('itModelo');
+  selM.innerHTML = '<option value="">— Personalizado —</option>' + catalog.modelos.map(m=>`<option value="${m.id}">${escapeHtml(m.nombre)} (${m.categoria}) — ${money(m.precio)}</option>`).join('');
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ---------------------------------------------------------------
+// ITEMS (cutting list)
+// ---------------------------------------------------------------
+function updateAreaPreview(){
+  const ancho = Number(document.getElementById('itAncho').value)||0;
+  const alto = Number(document.getElementById('itAlto').value)||0;
+  let area = ancho*alto;
+  if(catalog.empresa.areaMinimaActiva && area>0 && area < catalog.empresa.areaMinimaValor){
+    area = catalog.empresa.areaMinimaValor;
+  }
+  document.getElementById('itAreaCalc').value = area.toFixed(2) + ' m²';
+}
+
+function addItem(){
+  const categoria = document.getElementById('itCategoria').value;
+  const descripcion = document.getElementById('itDescripcion').value.trim() || categoria;
+  const cantidad = Math.max(1, Number(document.getElementById('itCantidad').value)||1);
+
+  let item = { id: uid(), categoria, descripcion, cantidad, modo: modoActual };
+
+  if(modoActual==='m2'){
+    const ancho = Number(document.getElementById('itAncho').value)||0;
+    const alto = Number(document.getElementById('itAlto').value)||0;
+    if(ancho<=0 || alto<=0){ toast('Ingresa ancho y alto válidos'); return; }
+    let area = ancho*alto;
+    const areaFacturable = (catalog.empresa.areaMinimaActiva && area < catalog.empresa.areaMinimaValor) ? catalog.empresa.areaMinimaValor : area;
+    const perfil = catalog.perfiles.find(p=>p.id===document.getElementById('itPerfil').value);
+    const vidrio = catalog.vidrios.find(v=>v.id===document.getElementById('itVidrio').value);
+    if(!perfil || !vidrio){ toast('Agrega al menos una línea de aluminio y un vidrio en el Catálogo'); return; }
+    const herrajes = Number(document.getElementById('itHerrajes').value)||0;
+    const precioUnit = areaFacturable*(perfil.precio+vidrio.precio) + herrajes;
+
+    item.ancho = ancho; item.alto = alto; item.area = area; item.areaFacturable = areaFacturable;
+    item.perfilNombre = perfil.nombre; item.perfilPrecio = perfil.precio;
+    item.vidrioNombre = vidrio.nombre; item.vidrioPrecio = vidrio.precio;
+    item.herrajes = herrajes;
+    item.precioUnit = precioUnit;
+    item.subtotal = precioUnit*cantidad;
+    item.detalle = `${ancho.toFixed(2)}×${alto.toFixed(2)} m (${areaFacturable.toFixed(2)} m² fact.) · ${perfil.nombre} + ${vidrio.nombre}` + (herrajes>0 ? ` + herrajes ${money(herrajes)}`:'');
+  } else {
+    const precio = Number(document.getElementById('itPrecioFijo').value)||0;
+    if(precio<=0){ toast('Ingresa un precio unitario válido'); return; }
+    item.precioUnit = precio;
+    item.subtotal = precio*cantidad;
+    item.detalle = 'Precio fijo';
+  }
+
+  currentQuote.items.push(item);
+  renderItems();
+
+  document.getElementById('itDescripcion').value='';
+  document.getElementById('itAncho').value=''; document.getElementById('itAlto').value='';
+  document.getElementById('itAreaCalc').value='0.00 m²';
+  document.getElementById('itHerrajes').value=''; document.getElementById('itPrecioFijo').value='';
+  document.getElementById('itCantidad').value=1;
+}
+
+const catIcon = {
+  Ventana:'⬜', Puerta:'🚪', Cancel:'🚿', Domo:'◔', Mampara:'▤', Otro:'⬛'
+};
+
+function renderItems(){
+  const wrap = document.getElementById('itemsList');
+  if(currentQuote.items.length===0){
+    wrap.innerHTML = '<div class="empty-note">Aún no hay partidas agregadas.</div>';
+  } else {
+    wrap.innerHTML = currentQuote.items.map((it,idx)=>`
+      <div class="item-card">
+        <span class="rm-bl"></span><span class="rm-br"></span>
+        <div class="row1">
+          <div>
+            <span class="cat-tag">${it.categoria} · #${idx+1}</span>
+            <div class="desc">${escapeHtml(it.descripcion)}</div>
+            <div class="meta">${escapeHtml(it.detalle)}</div>
+          </div>
+          <div class="price-col">
+            <button class="del" data-id="${it.id}" title="Eliminar">✕</button>
+            <div class="unit">${it.cantidad} × ${money(it.precioUnit)}</div>
+            <div class="subtotal">${money(it.subtotal)}</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    wrap.querySelectorAll('.del').forEach(b=>b.addEventListener('click', e=>{
+      currentQuote.items = currentQuote.items.filter(x=>x.id!==e.target.dataset.id);
+      renderItems();
+    }));
+  }
+  renderTotals();
+}
+
+function computeTotals(){
+  const subtotal = currentQuote.items.reduce((s,it)=>s+it.subtotal,0);
+  const descuento = subtotal*(currentQuote.descuentoPct/100);
+  const base = subtotal-descuento;
+  const iva = base*(currentQuote.ivaPct/100);
+  const total = base+iva;
+  return {subtotal, descuento, iva, total};
+}
+
+function renderTotals(){
+  const {subtotal, descuento, iva, total} = computeTotals();
+  document.getElementById('sumSubtotal').textContent = money(subtotal);
+  document.getElementById('sumDescuento').textContent = '-' + money(descuento);
+  document.getElementById('sumIva').textContent = money(iva);
+  document.getElementById('sumTotal').textContent = money(total);
+}
+
+// ---------------------------------------------------------------
+// SAVE / LOAD QUOTES
+// ---------------------------------------------------------------
+async function guardarPresupuesto(){
+  syncHeaderToQuote();
+  currentQuote.notas = document.getElementById('inNotas').value;
+  if(currentQuote.items.length===0){ toast('Agrega al menos una partida antes de guardar'); return; }
+
+  const {total} = computeTotals();
+  const ok1 = await storageSet('quote:'+currentQuote.id, currentQuote);
+
+  let index = await storageGet('quotes-index') || [];
+  index = index.filter(q=>q.id!==currentQuote.id);
+  index.unshift({ id:currentQuote.id, folio:currentQuote.folio, cliente:currentQuote.cliente||'(sin nombre)', fecha:currentQuote.fecha, total });
+  const ok2 = await storageSet('quotes-index', index);
+
+  if(ok1 && ok2){
+    toast('Presupuesto guardado ✓');
+  } else {
+    toast('⚠ No se pudo guardar. Revisa el espacio de almacenamiento del teléfono.');
+  }
+  renderSavedList();
+}
+
+async function renderSavedList(){
+  const wrap = document.getElementById('savedList');
+  const index = await storageGet('quotes-index') || [];
+  if(index.length===0){
+    wrap.innerHTML = '<div class="empty-note">Todavía no has guardado ningún presupuesto.</div>';
+    return;
+  }
+  wrap.innerHTML = index.map(q=>`
+    <div class="saved-row">
+      <div class="info">
+        <b>${escapeHtml(q.cliente)}</b>
+        <span>${q.folio} · ${q.fecha} · ${money(q.total)}</span>
+      </div>
+      <div class="actions">
+        <button class="btn btn-ghost btn-sm" data-act="ver" data-id="${q.id}">Abrir</button>
+        <button class="btn btn-ghost btn-sm" data-act="dup" data-id="${q.id}">Duplicar</button>
+        <button class="btn btn-danger btn-sm" data-act="del" data-id="${q.id}">Eliminar</button>
+      </div>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('button').forEach(b=>b.addEventListener('click', async (e)=>{
+    const id = e.target.dataset.id, act = e.target.dataset.act;
+    if(act==='ver'){
+      const q = await storageGet('quote:'+id);
+      if(q){
+        currentQuote = q;
+        renderQuoteHeader();
+        document.getElementById('inNotas').value = q.notas || '';
+        renderItems();
+        document.querySelector('.tab-btn[data-tab="nuevo"]').click();
+      }
+    } else if(act==='dup'){
+      const q = await storageGet('quote:'+id);
+      if(q){
+        currentQuote = {...q, id:uid(), folio:q.folio+'-COPIA'};
+        renderQuoteHeader();
+        document.getElementById('inNotas').value = q.notas || '';
+        renderItems();
+        document.querySelector('.tab-btn[data-tab="nuevo"]').click();
+        toast('Duplicado. Guárdalo para conservarlo.');
+      }
+    } else if(act==='del'){
+      if(confirm('¿Eliminar este presupuesto guardado?')){
+        await storageDelete('quote:'+id);
+        let index2 = await storageGet('quotes-index') || [];
+        index2 = index2.filter(x=>x.id!==id);
+        await storageSet('quotes-index', index2);
+        renderSavedList();
+      }
+    }
+  }));
+}
+
+// ---------------------------------------------------------------
+// PRINT
+// ---------------------------------------------------------------
+function imprimir(){
+  syncHeaderToQuote();
+  currentQuote.notas = document.getElementById('inNotas').value;
+  const {subtotal, descuento, iva, total} = computeTotals();
+
+  document.getElementById('pvEmpresa').textContent = (catalog.empresa.nombre || 'ALUVIDRIO').toUpperCase();
+  document.getElementById('pvEmpresaDatos').textContent = [catalog.empresa.direccion, catalog.empresa.telefono].filter(Boolean).join(' · ');
+  document.getElementById('pvFolio').textContent = currentQuote.folio;
+  document.getElementById('pvFecha').textContent = currentQuote.fecha;
+  document.getElementById('pvCliente').textContent = currentQuote.cliente || '—';
+  document.getElementById('pvObra').textContent = currentQuote.obra || '—';
+  document.getElementById('pvVigencia').textContent = currentQuote.vigencia || '—';
+
+  document.getElementById('pvItemsBody').innerHTML = currentQuote.items.map(it=>`
+    <tr style="border-bottom:1px solid #ddd;">
+      <td style="padding:6px;">${escapeHtml(it.descripcion)}</td>
+      <td style="padding:6px; font-size:11px; color:#555;">${escapeHtml(it.detalle)}</td>
+      <td style="padding:6px; text-align:center;">${it.cantidad}</td>
+      <td style="padding:6px; text-align:right;">${money(it.precioUnit)}</td>
+      <td style="padding:6px; text-align:right;">${money(it.subtotal)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('pvSubtotal').textContent = money(subtotal);
+  document.getElementById('pvDescuento').textContent = '-'+money(descuento);
+  document.getElementById('pvIva').textContent = money(iva);
+  document.getElementById('pvTotal').textContent = money(total);
+  document.getElementById('pvNotas').textContent = currentQuote.notas || '';
+
+  window.print();
+}
+
+init();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(e=>console.error('SW error', e));
+  });
+}
+</script>
+</body>
+</html>
